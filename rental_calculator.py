@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime
-
+import math
 # Configurazione della pagina
 st.set_page_config(
     page_title="Analisi Redditività Immobile",
@@ -57,7 +57,7 @@ prezzo_notte = st.sidebar.number_input(
     "Prezzo medio per notte (€)",
     min_value=50.0,
     max_value=1000.0,
-    value=195.0,
+    value=185.0,
     step=5.0,
     help="Prezzo che carichi per notte su piattaforme come Booking/Airbnb"
 )
@@ -88,7 +88,7 @@ spese_pulizia = st.sidebar.number_input(
     value=50.0,
     step=5.0,
     help="Quanto paghi per pulire tra un ospite e l'altro",
-    disabled = True
+    disabled = False
 )
 
 st.sidebar.markdown("---")
@@ -123,6 +123,27 @@ iva_percentuale = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
+st.sidebar.subheader("Calcolo tasse")
+
+condominio_fittizio = st.sidebar.number_input(
+    "rimborso spese (€)",
+    min_value=0.0,
+    max_value=1000.0,
+    value=300.0,
+    step=50.0,
+    help = " Rimborso per le spese di condominio e utenze"
+)
+
+IRPEF = st.sidebar.slider(
+    "Aliquota IRPEF(%)",
+    min_value=0.0,
+    max_value=50.0,
+    value=33.0,
+    step=1.0,
+    help="IRPEF marginale"
+)
+
+st.sidebar.markdown("---")
 st.sidebar.subheader("Spese Fisse Mensili")
 
 condominio = st.sidebar.number_input(
@@ -146,7 +167,16 @@ noleggio_biancheria = st.sidebar.number_input(
     "Noleggio biancheria per cambio (€)",
     min_value=0.0,
     max_value=100.0,
-    value=20.0,
+    value=25.0,
+    step=5.0,
+    disabled = True
+)
+
+pulizie_stanza = st.sidebar.number_input(
+    "Pulizie appartamento (€)",
+    min_value=0.0,
+    max_value=100.0,
+    value=25.0,
     step=5.0,
     disabled = True
 )
@@ -177,7 +207,7 @@ tasse_affitto_tradizionale = st.sidebar.slider(
 # ============================================================================
 
 # Calcolo numero di ingressi (check-in)
-ingressi = int(notti_prenotate_mese / permanenza_media)
+ingressi = math.ceil(notti_prenotate_mese / permanenza_media)
 
 # Ricavi lordi 
 ricavi_affitti = prezzo_notte * notti_prenotate_mese
@@ -187,7 +217,7 @@ fatturato_lordo = ricavi_affitti + spese_pulizia_incassate
 # Costi
 iva = fatturato_lordo * (iva_percentuale / 100)
 commissioni_piattaforme = fatturato_lordo * (commissione_piattaforme / 100)
-costo_pulizie = spese_pulizia * ingressi
+costo_pulizie = pulizie_stanza * ingressi
 costo_biancheria = noleggio_biancheria * ingressi
 spese_fisse_mensili = (condominio + utenze_mensili) 
 
@@ -195,22 +225,31 @@ spese_fisse_mensili = (condominio + utenze_mensili)
 fatturato_netto = fatturato_lordo - iva - commissioni_piattaforme
 
 # Commissione gestione (calcolata sul fatturato netto)
-costo_gestione = fatturato_netto * (commissione_gestione / 100)
+costo_gestione = fatturato_lordo * (commissione_gestione / 100)
 
 # Utile netto per il proprietario (PRIMA delle tasse IRPEF personali)
-utile_netto_breve = (fatturato_netto - costo_gestione - costo_pulizie - 
-                     costo_biancheria - spese_fisse_mensili)
+utile_netto_pretax = (fatturato_netto - costo_gestione - costo_pulizie - 
+                     costo_biancheria)
+
+#Afitto tassato con l'IRPEF
+affitto_tassato = utile_netto_pretax-condominio_fittizio
+
+tasse = (IRPEF/100)*affitto_tassato
+
+#utile netto
+
+utile_netto_breve = utile_netto_pretax - tasse - spese_fisse_mensili
 
 # ============================================================================
 # CALCOLI AFFITTO TRADIZIONALE
 # ============================================================================
 
-# Ricavi annui affitto tradizionale
+# Ricavi mensili affitto tradizionale
 ricavi_tradizionale = canone_affitto_tradizionale 
 
 # Costi (nel tradizionale il proprietario paga condominio e manutenzione ordinaria)
 # Le utenze solitamente sono a carico dell'inquilino
-costi_tradizionale = condominio   # Solo condominio, utenze le paga l'inquilino
+costi_tradizionale = 0   # Solo condominio, utenze le paga l'inquilino
 
 # Tasse
 tasse_tradizionale = ricavi_tradizionale * (tasse_affitto_tradizionale / 100)
@@ -298,8 +337,8 @@ with col_right:
             "Commissione gestione",
             "Pulizie",
             "Noleggio biancheria",
-            "Condominio annuo",
-            "Utenze annue",
+            "Condominio mensile",
+            "Utenze mensili",
             "Totale costi"
         ],
         "Importo (€)": [
@@ -315,14 +354,15 @@ with col_right:
     
     # ROI semplificato
     costi_totali = costo_gestione + costo_pulizie + costo_biancheria + spese_fisse_mensili
-    roi = (utile_netto_breve / costi_totali * 100) if costi_totali > 0 else 0
+    margine_netto = (utile_netto_breve / fatturato_lordo * 100) if costi_totali > 0 else 0
     
     st.success(f"""
-    **Margine operativo:**
+    **Riepilogo:**
     - Fatturato netto: € {fatturato_netto:,.0f}
     - Costi totali: € {costi_totali:,.0f}
+    - Tasse: € {tasse:,.0f}
     - **Utile netto: € {utile_netto_breve:,.0f}**
-    - ROI sui costi: {roi:.1f}%
+    - Margine netto (%): {margine_netto:.1f}%
     """)
 
 st.markdown("---")
@@ -342,7 +382,7 @@ with tab1:
     fig_confronto.add_trace(go.Bar(
         name='Affitto Breve',
         x=['Ricavi Mensili', 'Costi Mensili', 'Utile Netto'],
-        y=[fatturato_netto, costo_gestione + costo_pulizie + costo_biancheria + spese_fisse_mensili, utile_netto_breve],
+        y=[fatturato_netto, costo_gestione + costo_pulizie + costo_biancheria + spese_fisse_mensili, utile_netto_pretax],
         marker_color='#1f77b4',
         text=[f"€{fatturato_netto:,.0f}", 
               f"€{(costo_gestione + costo_pulizie + costo_biancheria + spese_fisse_mensili):,.0f}",
@@ -424,11 +464,11 @@ with tab3:
     # Proiezione mensile
     mesi = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
     
-    utile_mensile_breve = utile_netto_breve * 12
+    utile_mensile_breve_y = utile_netto_breve * 12
     utile_mensile_trad = utile_netto_tradizionale * 12
     
     # Cumulativo
-    cumulativo_breve = [utile_mensile_breve * (i+1) for i in range(12)]
+    cumulativo_breve = [utile_mensile_breve_y * (i+1) for i in range(12)]
     cumulativo_trad = [utile_mensile_trad * (i+1) for i in range(12)]
     
     fig_proiezione = go.Figure()
@@ -465,7 +505,7 @@ with tab3:
     **Utili mensili medi:**
     - Affitto Breve: € {utile_netto_breve:,.0f}/mese
     - Affitto Tradizionale: € {utile_netto_tradizionale:,.0f}/mese
-    - Differenza: € {(utile_netto_breve - utile_netto_tradizionale):,.0f}/mese
+    - Differenza: € {(utile_netto_breve- utile_netto_tradizionale):,.0f}/mese
 
    
 """)
@@ -480,14 +520,13 @@ st.markdown("###  Note Importanti")
 with st.expander("ℹ️ Clicca per leggere le note sul calcolo"):
     st.markdown("""
     **Affitto Breve:**
-    - I calcoli includono IVA, commissioni piattaforme, costi di gestione, pulizie e spese fisse
-    - L'utile mostrato è al netto di tutti i costi operativi ma PRIMA delle tasse IRPEF personali
-    - Le tasse personali dipendono dal tuo scaglione IRPEF e vanno calcolate separatamente
+    - La gesione prevede che gli incassi ed i pagamenti siano gestiti da DREAMNEST
+    - DREAMNEST riconosce un canone di locazione nettato dei costi dell'attività
+    - Le tasse dipendono dal tuo scaglione IRPEF
     
     **Affitto Tradizionale:**
     - Si assume cedolare secca o IRPEF marginale come indicato
-    - Le utenze sono generalmente a carico dell'inquilino
-    - Include solo condominio come costo fisso per il proprietario
+    - Il condominio e le utenze sono generalmente a carico dell'inquilino
     - Rischio di morosità e periodi di vuoto non considerati
     
     **Assunzioni:**
