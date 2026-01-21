@@ -97,8 +97,8 @@ st.sidebar.subheader(" Costi e Commissioni")
 commissione_piattaforme = st.sidebar.slider(
     "Commissione piattaforme (%)",
     min_value=0.0,
-    max_value=30.0,
-    value=100.0,
+    max_value=100.0,
+    value=15.0,
     step=0.5,
     help="Booking/Airbnb di solito prendono 12-18%",
     disabled = True
