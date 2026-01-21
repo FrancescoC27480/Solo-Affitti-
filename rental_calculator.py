@@ -438,22 +438,24 @@ with tab2:
     fig_proiezione = go.Figure()
     
     fig_proiezione.add_trace(go.Scatter(
-        x=mesi,
-        y=cumulativo_breve,
-        name='Affitto Breve',
-        mode='lines+markers',
-        line=dict(color='#1f77b4', width=3),
-        fill='tonexty'
-    ))
-    
-    fig_proiezione.add_trace(go.Scatter(
-        x=mesi,
-        y=cumulativo_trad,
-        name='Affitto Tradizionale',
-        mode='lines+markers',
-        line=dict(color='#ff7f0e', width=3),
-        fill='tozeroy'
-    ))
+    x=mesi,
+    y=cumulativo_breve,
+    name='Affitto Breve',
+    mode='lines+markers',
+    line=dict(color='#1f77b4', width=3),
+    fill='tonexty',
+    hovertemplate='€%{y:.1f}K<extra></extra>'  
+))
+
+fig_proiezione.add_trace(go.Scatter(
+    x=mesi,
+    y=cumulativo_trad,
+    name='Affitto Tradizionale',
+    mode='lines+markers',
+    line=dict(color='#ff7f0e', width=3),
+    fill='tozeroy',
+    hovertemplate='€%{y:.1f}K<extra></extra>'  
+))
     
     fig_proiezione.update_layout(
         title="Accumulo Utile Netto nell'Anno",
