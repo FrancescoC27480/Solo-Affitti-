@@ -428,8 +428,8 @@ with tab2:
     # Proiezione mensile
     mesi = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
     
-    utile_mensile_breve_y = utile_netto_breve * 12
-    utile_mensile_trad = utile_netto_tradizionale * 12
+    utile_mensile_breve_y = utile_netto_breve 
+    utile_mensile_trad = utile_netto_tradizionale
     
     # Cumulativo
     cumulativo_breve = [utile_mensile_breve_y * (i+1) for i in range(12)]
