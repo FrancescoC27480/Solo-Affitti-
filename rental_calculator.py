@@ -373,7 +373,7 @@ st.markdown("---")
 
 st.subheader(" Analisi Comparativa")
 
-tab1, tab2, tab3 = st.tabs([" Confronto Utili", " Breakdown Costi", " Proiezione Mensile"])
+tab1, tab2 = st.tabs([" Confronto Utili", " Proiezione Mensile"])
 
 with tab1:
     # Grafico a barre confronto utili
@@ -422,45 +422,9 @@ with tab1:
         ({percentuale_guadagno:.1f}% in meno con affitto breve)
         """)
 
-with tab2:
-    # Breakdown costi affitto breve
-    col_pie1, col_pie2 = st.columns(2)
-    
-    with col_pie1:
-        st.markdown("#### Affitto Breve - Distribuzione Costi")
-        costi_breakdown = {
-            'Commissione gestione': costo_gestione,
-            'Pulizie': costo_pulizie,
-            'Biancheria': costo_biancheria,
-            'Condominio': condominio ,
-            'Utenze': utenze_mensili
-        }
-        
-        fig_pie1 = px.pie(
-            values=list(costi_breakdown.values()),
-            names=list(costi_breakdown.keys()),
-            title="Composizione Costi Mensili",
-            hole=0.4
-        )
-        st.plotly_chart(fig_pie1, use_container_width=True)
-    
-    with col_pie2:
-        st.markdown("#### Affitto Tradizionale - Distribuzione Costi")
-        costi_trad_breakdown = {
-            'Condominio': costi_tradizionale,
-            'Tasse': tasse_tradizionale
-        }
-        
-        fig_pie2 = px.pie(
-            values=list(costi_trad_breakdown.values()),
-            names=list(costi_trad_breakdown.keys()),
-            title="Composizione Costi Mensili",
-            hole=0.4,
-            color_discrete_sequence=px.colors.sequential.RdBu
-        )
-        st.plotly_chart(fig_pie2, use_container_width=True)
 
-with tab3:
+
+with tab2:
     # Proiezione mensile
     mesi = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
     
