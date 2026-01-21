@@ -108,7 +108,7 @@ commissione_gestione = st.sidebar.slider(
     "Commissione di gestione (%)",
     min_value=0.0,
     max_value=40.0,
-    value=20.0,
+    value=30.0,
     step=1.0,
     help="Percentuale che prende l'agenzia per gestire tutto",
     disabled = True
