@@ -444,7 +444,7 @@ with tab2:
         mode='lines+markers',
         line=dict(color='#1f77b4', width=3),
         fill='tonexty',
-        hovertemplate='€%{y:.1f}K<extra></extra>'  
+        hovertemplate='€%{y:.1f}<extra></extra>'  
     ))
 
     fig_proiezione.add_trace(go.Scatter(
@@ -454,7 +454,7 @@ with tab2:
         mode='lines+markers',
         line=dict(color='#ff7f0e', width=3),
         fill='tozeroy',
-        hovertemplate='€%{y:.1f}K<extra></extra>'  
+        hovertemplate='€%{y:.1f}<extra></extra>'  
     ))
     
     fig_proiezione.update_layout(
