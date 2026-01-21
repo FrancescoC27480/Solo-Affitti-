@@ -119,7 +119,7 @@ iva_percentuale = st.sidebar.radio(
     "IVA al 10% o 22% a seconda del regime",
     options = [10,22],
     index = 0,
-    horizontal = True
+    horizontal = True,
     disabled = True
 )
 
