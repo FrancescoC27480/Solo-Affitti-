@@ -120,6 +120,7 @@ iva_percentuale = st.sidebar.radio(
     options = [10,22],
     index = 0,
     horizontal = True
+    disabled = True
 )
 
 st.sidebar.markdown("---")
