@@ -383,7 +383,7 @@ with tab1:
     fig_confronto.add_trace(go.Bar(
         name='Affitto Breve',
         x=['Ricavi Mensili', 'Costi Mensili', 'Utile Netto'],
-        y=[fatturato_netto, costo_gestione + costo_pulizie + costo_biancheria + spese_fisse_mensili, utile_netto_pretax],
+        y=[fatturato_netto, costo_gestione + costo_pulizie + costo_biancheria + spese_fisse_mensili, utile_netto_breve],
         marker_color='#1f77b4',
         text=[f"€{fatturato_netto:,.0f}", 
               f"€{(costo_gestione + costo_pulizie + costo_biancheria + spese_fisse_mensili):,.0f}",
