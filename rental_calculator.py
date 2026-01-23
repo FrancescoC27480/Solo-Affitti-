@@ -189,7 +189,7 @@ canone_affitto_tradizionale = st.sidebar.number_input(
     "Canone affitto tradizionale mensile (€)",
     min_value=0.0,
     max_value=5000.0,
-    value=1200.0,
+    value=1100.0,
     step=50.0,
     help="Quanto potresti prendere con un affitto normale"
 )
