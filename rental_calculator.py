@@ -66,7 +66,7 @@ notti_prenotate_mese = st.sidebar.number_input(
     "Notti prenotate al mese",
     min_value=1,
     max_value=30,
-    value=20,
+    value=18,
     step=1,
     help="Stima realistica del numero di notti che riesci ad affittare"
 )
@@ -85,7 +85,7 @@ spese_pulizia = st.sidebar.number_input(
     "Spese di pulizia per cambio ospite (€)",
     min_value=0.0,
     max_value=200.0,
-    value=50.0,
+    value=40.0,
     step=5.0,
     help="Quanto paghi per pulire tra un ospite e l'altro",
     disabled = False
@@ -130,7 +130,7 @@ condominio_fittizio = st.sidebar.number_input(
     "rimborso spese (€)",
     min_value=0.0,
     max_value=1000.0,
-    value=300.0,
+    value=150.0,
     step=50.0,
     help = " Rimborso per le spese di condominio e utenze"
 )
