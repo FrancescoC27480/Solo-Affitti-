@@ -57,7 +57,7 @@ prezzo_notte = st.sidebar.number_input(
     "Prezzo medio per notte (€)",
     min_value=50.0,
     max_value=1000.0,
-    value=185.0,
+    value=170.0,
     step=5.0,
     help="Prezzo che carichi per notte su piattaforme come Booking/Airbnb"
 )
@@ -66,7 +66,7 @@ notti_prenotate_mese = st.sidebar.number_input(
     "Notti prenotate al mese",
     min_value=1,
     max_value=30,
-    value=26,
+    value=20,
     step=1,
     help="Stima realistica del numero di notti che riesci ad affittare"
 )
@@ -108,7 +108,7 @@ commissione_gestione = st.sidebar.slider(
     "Commissione di gestione (%)",
     min_value=0.0,
     max_value=100.0,
-    value=30.0,
+    value=20.0,
     step=1.0,
     help="Percentuale che prende l'agenzia per gestire tutto",
     disabled = True
